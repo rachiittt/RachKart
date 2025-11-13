@@ -1,6 +1,6 @@
 # Finnews - Fullstack Application
 
-A modern fullstack application built with React, Express, Prisma, and Tailwind CSS.
+A modern fullstack application built with React, Express, Prisma, and Tailwind CSS used to show and update abot the latest financial news and articles.
 
 ## Project Structure
 
