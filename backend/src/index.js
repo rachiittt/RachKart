@@ -14,10 +14,7 @@ const prisma = new PrismaClient()
 const tokenBlacklist = new Set()
 
 app.use(cors({
-  origin: [
-    "http://localhost:3000",        // local frontend
-    "https://fin-news-n6v4el4dj-shubh1s-projects.vercel.app", // deployed frontend (example)
-  ],
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
