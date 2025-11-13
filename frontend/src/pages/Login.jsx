@@ -34,7 +34,7 @@ export default function Login() {
         if (data.token) localStorage.setItem('token', data.token)
         setLoading(false)
         setError('')
-        // Redirect to home
+
         navigate('/')
         // reload to update navbar state
         window.location.reload()
