@@ -22,7 +22,7 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
     // Call backend API
-    fetch('https://finnews-giwa.onrender.com/login', {
+    fetch('https://finnews-giwa.onrender.com/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: formData.email, password: formData.password })

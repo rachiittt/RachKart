@@ -31,7 +31,7 @@ export default function Signup() {
 
     setLoading(true)
     // Call backend to create user
-    fetch('https://finnews-giwa.onrender.com/signup', {
+    fetch('https://finnews-giwa.onrender.com/api/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: formData.fullName, email: formData.email, password: formData.password })
