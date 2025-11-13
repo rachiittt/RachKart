@@ -1,0 +1,22 @@
+<svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="energyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0891B2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0369A1;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="500" height="300" fill="url(#energyGrad)"/>
+  <g transform="translate(150, 100)">
+    <polygon points="75,0 100,40 50,40" fill="#fff" opacity="0.4"/>
+    <polygon points="75,20 90,50 60,50" fill="#fff" opacity="0.6"/>
+    <polygon points="75,40 85,60 65,60" fill="#fff"/>
+  </g>
+  <g transform="translate(280, 80)">
+    <polygon points="75,0 100,40 50,40" fill="#fff" opacity="0.4"/>
+    <polygon points="75,20 90,50 60,50" fill="#fff" opacity="0.6"/>
+    <polygon points="75,40 85,60 65,60" fill="#fff"/>
+  </g>
+  <circle cx="250" cy="220" r="50" fill="rgba(255,255,255,0.15)" stroke="#fff" stroke-width="2"/>
+  <text x="250" y="230" font-size="40" fill="#fff" text-anchor="middle">⚡</text>
+  <text x="250" y="280" font-size="24" font-weight="bold" fill="#fff" text-anchor="middle">Energy News</text>
+</svg>
