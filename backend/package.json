@@ -1,26 +1,28 @@
 {
   "name": "finnews-backend",
   "version": "1.0.0",
-  "description": "Backend for finnews application",
+  "description": "Backend for FinNews application",
   "private": true,
   "main": "src/index.js",
   "type": "module",
   "dependencies": {
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "^6.19.0",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1",
+    "nodemon": "^3.1.11",
     "prisma": "^6.19.0"
   },
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
+    "build": "npm install && npx prisma generate",
+    "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:migrate": "prisma migrate deploy"
   }
 }

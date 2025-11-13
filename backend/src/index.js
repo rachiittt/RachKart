@@ -11,24 +11,19 @@ const app = express()
 const PORT = process.env.PORT || 5001
 const prisma = new PrismaClient()
 
-// Simple in-memory token blacklist for logout (resets on server restart)
 const tokenBlacklist = new Set()
 
-// Middleware
 app.use(cors())
 app.use(express.json())
 
-// Health check route
 app.get('/api/health', (req, res) => {
   res.json({ status: 'Server is running' })
 })
 
-// Welcome route
 app.get('/api', (req, res) => {
   res.json({ message: 'Welcome to Finnews API' })
 })
 
-// Auth: Signup
 app.post('/api/auth/signup', async (req, res) => {
   try {
     const { name, email, password } = req.body
@@ -56,7 +51,6 @@ app.post('/api/auth/signup', async (req, res) => {
   }
 })
 
-// Auth: Login
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body
@@ -78,9 +72,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
 })
 
-// Auth: Logout
 app.post('/api/auth/logout', (req, res) => {
-  // Accept token via Authorization header or body
   const authHeader = req.headers.authorization || ''
   const tokenFromHeader = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null
   const token = tokenFromHeader || req.body.token
@@ -90,7 +82,6 @@ app.post('/api/auth/logout', (req, res) => {
   return res.json({ message: 'Logged out' })
 })
 
-// Middleware to check token and blacklist
 export const authenticate = (req, res, next) => {
   const auth = req.headers.authorization || ''
   const token = auth.startsWith('Bearer ') ? auth.slice(7) : null
@@ -105,7 +96,6 @@ export const authenticate = (req, res, next) => {
   }
 }
 
-// Example protected route
 app.get('/api/me', authenticate, async (req, res) => {
   const userId = req.user.sub
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, email: true, name: true } })
