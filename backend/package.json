@@ -24,5 +24,8 @@
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy"
-  }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

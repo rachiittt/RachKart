@@ -1,227 +1,264 @@
-import { Heart } from 'lucide-react'
+import { ShoppingCart, Heart, Star, Truck, RotateCcw, Lock } from 'lucide-react'
 import { useState } from 'react'
 
 export default function Home() {
-  const [likedArticles, setLikedArticles] = useState({})
+  const [wishlist, setWishlist] = useState(new Set())
+  const [cartItems, setCartItems] = useState([])
 
-  const newsArticles = [
+  const toggleWishlist = (productId) => {
+    const newWishlist = new Set(wishlist)
+    if (newWishlist.has(productId)) {
+      newWishlist.delete(productId)
+    } else {
+      newWishlist.add(productId)
+    }
+    setWishlist(newWishlist)
+  }
+
+  const addToCart = (product) => {
+    setCartItems([...cartItems, product])
+  }
+
+  const products = [
     {
       id: 1,
-      title: 'Tech Giants Report Record Earnings',
-      description: 'Major technology companies announce their strongest quarterly results, beating market expectations.',
-      category: 'Technology',
-      date: 'Nov 12, 2025',
-      image: '/images/tech-news.svg',
-      author: 'Sarah Chen',
-      readTime: '5 min read',
-      claps: 2340
+      name: 'Premium Wireless Headphones',
+      price: 129.99,
+      originalPrice: 199.99,
+      rating: 4.8,
+      reviews: 342,
+      image: 'https://via.placeholder.com/250x250/3B82F6/FFFFFF?text=Headphones',
+      category: 'Electronics',
+      badge: 'Best Seller',
+      description: 'High-quality sound with noise cancellation'
     },
     {
       id: 2,
-      title: 'Stock Market Reaches All-Time High',
-      description: 'Global markets surge as investors gain confidence in economic recovery and growth prospects.',
-      category: 'Markets',
-      date: 'Nov 12, 2025',
-      image: '/images/market-news.svg',
-      author: 'James Wilson',
-      readTime: '7 min read',
-      claps: 1856
+      name: 'Smart Watch Pro',
+      price: 299.99,
+      originalPrice: 399.99,
+      rating: 4.6,
+      reviews: 256,
+      image: 'https://via.placeholder.com/250x250/8B5CF6/FFFFFF?text=SmartWatch',
+      category: 'Wearables',
+      badge: 'New',
+      description: 'Advanced fitness tracking and notifications'
     },
     {
       id: 3,
-      title: 'Cryptocurrency Volatility Continues',
-      description: 'Digital assets experience significant price fluctuations amid regulatory developments.',
-      category: 'Crypto',
-      date: 'Nov 11, 2025',
-      image: '/images/crypto-news.svg',
-      author: 'Alex Morgan',
-      readTime: '6 min read',
-      claps: 3102
+      name: 'Ultra HD Camera',
+      price: 799.99,
+      originalPrice: 999.99,
+      rating: 4.9,
+      reviews: 189,
+      image: 'https://via.placeholder.com/250x250/EC4899/FFFFFF?text=Camera',
+      category: 'Photography',
+      badge: 'Hot',
+      description: '4K video recording with stabilization'
     },
     {
       id: 4,
-      title: 'Banking Sector Shows Resilience',
-      description: 'Financial institutions demonstrate strong fundamentals despite economic headwinds.',
-      category: 'Finance',
-      date: 'Nov 11, 2025',
-      image: '/images/finance-news.svg',
-      author: 'Emma Richardson',
-      readTime: '8 min read',
-      claps: 1543
+      name: 'Portable Speaker',
+      price: 79.99,
+      originalPrice: 129.99,
+      rating: 4.5,
+      reviews: 412,
+      image: 'https://via.placeholder.com/250x250/F59E0B/FFFFFF?text=Speaker',
+      category: 'Audio',
+      badge: null,
+      description: 'Waterproof design with 12-hour battery'
     },
     {
       id: 5,
-      title: 'Oil Prices Stabilize on Supply News',
-      description: 'Energy markets stabilize following announcements about production decisions.',
-      category: 'Energy',
-      date: 'Nov 10, 2025',
-      image: '/images/energy-news.svg',
-      author: 'Michael Torres',
-      readTime: '5 min read',
-      claps: 892
+      name: 'Mechanical Keyboard RGB',
+      price: 149.99,
+      originalPrice: 249.99,
+      rating: 4.7,
+      reviews: 523,
+      image: 'https://via.placeholder.com/250x250/10B981/FFFFFF?text=Keyboard',
+      category: 'Gaming',
+      badge: 'Sale',
+      description: 'Cherry MX switches with RGB lighting'
     },
     {
       id: 6,
-      title: 'Real Estate Market Booms Across Regions',
-      description: 'Property values surge as demand remains strong in major metropolitan areas.',
-      category: 'Real Estate',
-      date: 'Nov 10, 2025',
-      image: '/images/realestate-news.svg',
-      author: 'Lisa Anderson',
-      readTime: '6 min read',
-      claps: 1220
+      name: 'Wireless Mouse Pro',
+      price: 59.99,
+      originalPrice: 99.99,
+      rating: 4.4,
+      reviews: 298,
+      image: 'https://via.placeholder.com/250x250/06B6D4/FFFFFF?text=Mouse',
+      category: 'Accessories',
+      badge: null,
+      description: 'Precision tracking up to 4000 DPI'
+    },
+    {
+      id: 7,
+      name: 'USB-C Hub Multi Port',
+      price: 39.99,
+      originalPrice: 79.99,
+      rating: 4.6,
+      reviews: 187,
+      image: 'https://via.placeholder.com/250x250/6366F1/FFFFFF?text=USB+Hub',
+      category: 'Accessories',
+      badge: 'New',
+      description: '7-in-1 connectivity solution'
+    },
+    {
+      id: 8,
+      name: 'Phone Stand & Holder',
+      price: 24.99,
+      originalPrice: 49.99,
+      rating: 4.3,
+      reviews: 654,
+      image: 'https://via.placeholder.com/250x250/8B5CF6/FFFFFF?text=Phone+Stand',
+      category: 'Accessories',
+      badge: null,
+      description: 'Adjustable and portable design'
     }
   ]
 
-  const toggleLike = (id) => {
-    setLikedArticles(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }))
-  }
-
   return (
-    <div className="min-h-screen bg-white">
-      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {/* Featured Article */}
-        <div className="mb-12 border-b border-gray-200 pb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="md:col-span-2">
-              <div className="mb-4">
-                <span className="text-sm font-bold text-gray-600 uppercase tracking-wide">Featured</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
-                {newsArticles[0].title}
-              </h2>
-              <p className="text-xl text-gray-600 mb-6 leading-relaxed">
-                {newsArticles[0].description}
-              </p>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-gray-300"></div>
-                <div>
-                  <p className="font-semibold text-gray-900">{newsArticles[0].author}</p>
-                  <p className="text-sm text-gray-600">{newsArticles[0].date} • {newsArticles[0].readTime}</p>
-                </div>
+    <div className="min-h-screen bg-gradient-to-b from-white via-blue-50 to-gray-50">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 text-white py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="animate-fadeInUp">
+              <h1 className="text-5xl font-bold mb-4 leading-tight">Welcome to RachKart</h1>
+              <p className="text-xl text-blue-100 mb-6">Discover amazing tech products at unbeatable prices. Shop now and save big!</p>
+              <button className="btn-primary bg-white text-blue-600 hover:bg-gray-100">
+                Start Shopping
+              </button>
+            </div>
+            <div className="animate-bounce-slow">
+              <div className="text-8xl text-center">🛍️</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-12 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="flex gap-4 p-6 rounded-lg bg-gradient-to-br from-blue-50 to-transparent hover:shadow-lg transition-shadow">
+              <Truck className="w-8 h-8 text-blue-600 flex-shrink-0" />
+              <div>
+                <h3 className="font-bold text-gray-900">Free Shipping</h3>
+                <p className="text-sm text-gray-600">On orders over $50</p>
               </div>
             </div>
-            <div className="md:col-span-1">
-              <div className="relative h-80 overflow-hidden rounded-lg bg-gray-200">
-                <img
-                  src={newsArticles[0].image}
-                  alt={newsArticles[0].title}
-                  className="w-full h-full object-cover"
-                />
+            <div className="flex gap-4 p-6 rounded-lg bg-gradient-to-br from-purple-50 to-transparent hover:shadow-lg transition-shadow">
+              <RotateCcw className="w-8 h-8 text-purple-600 flex-shrink-0" />
+              <div>
+                <h3 className="font-bold text-gray-900">Easy Returns</h3>
+                <p className="text-sm text-gray-600">30-day money back guarantee</p>
+              </div>
+            </div>
+            <div className="flex gap-4 p-6 rounded-lg bg-gradient-to-br from-pink-50 to-transparent hover:shadow-lg transition-shadow">
+              <Lock className="w-8 h-8 text-pink-600 flex-shrink-0" />
+              <div>
+                <h3 className="font-bold text-gray-900">Secure Payment</h3>
+                <p className="text-sm text-gray-600">100% secure transactions</p>
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Main Content Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Articles Feed */}
-          <div className="lg:col-span-2">
-            <div className="space-y-8">
-              {newsArticles.slice(1).map((article) => (
-                <article
-                  key={article.id}
-                  className="border-b border-gray-200 pb-8 group cursor-pointer"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                    {/* Article Content */}
-                    <div className="sm:col-span-3">
-                      <div className="mb-3">
-                        <span className="text-sm text-gray-700 font-medium">
-                          {article.category}
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-600 transition-colors line-clamp-3">
-                        {article.title}
-                      </h3>
-                      <p className="text-gray-600 text-base mb-4 line-clamp-2">
-                        {article.description}
-                      </p>
-
-                      {/* Article Meta */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-gray-300"></div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">{article.author}</p>
-                            <p className="text-xs text-gray-600">{article.date} • {article.readTime}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => toggleLike(article.id)}
-                            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                          >
-                            <Heart
-                              size={16}
-                              className={likedArticles[article.id] ? 'fill-red-500 text-red-500' : 'text-gray-600'}
-                            />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Article Image */}
-                    <div className="sm:col-span-1">
-                      <div className="relative h-32 overflow-hidden rounded-lg bg-gray-200 group-hover:opacity-75 transition-opacity">
-                        <img
-                          src={article.image}
-                          alt={article.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
+      {/* Products Section */}
+      <section className="py-16 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12 animate-fadeInUp">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Products</h2>
+            <p className="text-gray-600 text-lg">Handpicked selection of top-rated products</p>
           </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            {/* Trending Section */}
-            <div className="sticky top-20">
-              <div className="mb-8">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Trending</h3>
-                <div className="space-y-6">
-                  {newsArticles.slice(0, 3).map((article, index) => (
-                    <div key={article.id} className="group cursor-pointer">
-                      <p className="text-sm font-bold text-gray-600 mb-1">{index + 1}</p>
-                      <h4 className="font-bold text-gray-900 group-hover:text-gray-600 transition-colors line-clamp-2 mb-2">
-                        {article.title}
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        by <span className="font-medium">{article.author}</span>
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Newsletter Section */}
-              <div className="bg-gray-100 rounded-lg p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Subscribe to our newsletter</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Stay updated with the latest financial news and market insights
-                </p>
-                <div className="space-y-3">
-                  <input
-                    type="email"
-                    placeholder="Your email"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {products.map((product, index) => (
+              <div
+                key={product.id}
+                className="product-card bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                {/* Product Image */}
+                <div className="relative bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden h-48">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
                   />
-                  <button className="w-full px-3 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
-                    Subscribe
+                  {product.badge && (
+                    <span className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                      {product.badge}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => toggleWishlist(product.id)}
+                    className="absolute top-3 left-3 p-2 bg-white rounded-full shadow-md hover:bg-red-50 transition-colors"
+                  >
+                    <Heart
+                      size={20}
+                      className={wishlist.has(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}
+                    />
+                  </button>
+                </div>
+
+                {/* Product Info */}
+                <div className="p-4">
+                  <p className="text-xs text-blue-600 font-semibold mb-1">{product.category}</p>
+                  <h3 className="font-bold text-gray-900 mb-2 line-clamp-2">{product.name}</h3>
+                  <p className="text-xs text-gray-600 mb-3">{product.description}</p>
+
+                  {/* Rating */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="flex gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          size={14}
+                          className={i < Math.floor(product.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-xs text-gray-600">({product.reviews})</span>
+                  </div>
+
+                  {/* Price */}
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-2xl font-bold text-blue-600">${product.price}</span>
+                    <span className="text-sm text-gray-500 line-through">${product.originalPrice}</span>
+                    <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+                      Save {Math.round((1 - product.price / product.originalPrice) * 100)}%
+                    </span>
+                  </div>
+
+                  {/* Add to Cart Button */}
+                  <button
+                    onClick={() => addToCart(product)}
+                    className="w-full btn-primary flex items-center justify-center gap-2 bg-blue-600 text-white hover:bg-blue-700"
+                  >
+                    <ShoppingCart size={18} />
+                    Add to Cart
                   </button>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* CTA Section */}
+      <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16 px-4 my-8">
+        <div className="max-w-4xl mx-auto text-center animate-fadeInUp">
+          <h2 className="text-4xl font-bold mb-4">Limited Time Offer!</h2>
+          <p className="text-xl text-blue-100 mb-8">Get up to 40% off on selected items. Shop now before stock runs out!</p>
+          <button className="btn-primary bg-white text-blue-600 hover:bg-gray-100">
+            View All Deals
+          </button>
+        </div>
+      </section>
     </div>
   )
 }
