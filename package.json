@@ -1,15 +1,7 @@
 {
   "name": "rachkart",
   "version": "1.0.0",
-  "description": "A modern fullstack application built with React, Express, Prisma, and Tailwind CSS used to show and update abot the latest financial news and articles.",
-  "homepage": "https://github.com/S-h-u-b-h-1/FinNews#readme",
-  "bugs": {
-    "url": "https://github.com/S-h-u-b-h-1/FinNews/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/S-h-u-b-h-1/FinNews.git"
-  },
+  "description": "RachKart — a modern e-commerce starter (React, Express, Prisma, Tailwind)",
   "license": "ISC",
   "author": "",
   "type": "commonjs",

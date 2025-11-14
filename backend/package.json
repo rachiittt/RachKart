@@ -1,7 +1,7 @@
 {
-  "name": "finnews-backend",
+  "name": "rachkart-backend",
   "version": "1.0.0",
-  "description": "Backend for FinNews application",
+  "description": "Backend API for RachKart e-commerce application",
   "private": true,
   "main": "src/index.js",
   "type": "module",

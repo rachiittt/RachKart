@@ -55,8 +55,8 @@ export default function Signup() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Join Finnews</h1>
-          <p className="text-gray-600">Create an account to start reading</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Join RachKart</h1>
+          <p className="text-gray-600">Create an account to start shopping</p>
         </div>
 
         {/* Form */}

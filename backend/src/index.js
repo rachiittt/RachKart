@@ -26,7 +26,7 @@ app.get('/api/health', (req, res) => {
 })
 
 app.get('/api', (req, res) => {
-  res.json({ message: 'Welcome to Finnews API' })
+  res.json({ message: 'Welcome to RachKart API' })
 })
 
 app.post('/api/auth/signup', async (req, res) => {
