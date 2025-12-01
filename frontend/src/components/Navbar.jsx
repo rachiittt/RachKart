@@ -8,6 +8,8 @@ export default function Navbar() {
   const [isAuth, setIsAuth] = useState(false)
   const [cartCount, setCartCount] = useState(0)
   const [likeCount, setLikeCount] = useState(0)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -45,6 +47,14 @@ export default function Navbar() {
     }
   }
 
+  const handleSearch = (e) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      navigate(`/?search=${encodeURIComponent(searchQuery)}`)
+      setIsSearchOpen(false)
+    }
+  }
+
   return (
     <nav className="border-b border-gray-200 sticky top-0 z-50 bg-gradient-to-r from-white via-blue-50 to-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,9 +87,37 @@ export default function Navbar() {
             >
               Contact
             </Link>
-            <button className="p-2 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors">
-              <Search size={18} className="text-blue-600" />
-            </button>
+            <div className="relative">
+              {isSearchOpen ? (
+                <form onSubmit={handleSearch} className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center bg-white rounded-full border border-blue-200 shadow-lg p-1 animate-fadeInRight">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search products..."
+                    className="w-48 px-3 py-1 outline-none text-sm text-gray-700"
+                    autoFocus
+                  />
+                  <button type="submit" className="p-1 bg-blue-600 rounded-full text-white hover:bg-blue-700">
+                    <Search size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsSearchOpen(false)}
+                    className="ml-1 p-1 text-gray-400 hover:text-gray-600"
+                  >
+                    <X size={14} />
+                  </button>
+                </form>
+              ) : (
+                <button
+                  onClick={() => setIsSearchOpen(true)}
+                  className="p-2 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors"
+                >
+                  <Search size={18} className="text-blue-600" />
+                </button>
+              )}
+            </div>
             <button className="relative p-2 hover:bg-blue-100 rounded-full transition-colors">
               <ShoppingCart size={20} className="text-gray-700 hover:text-blue-600" />
               {cartCount > 0 && <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{cartCount}</span>}
@@ -93,8 +131,8 @@ export default function Navbar() {
                 <Link
                   to="/login"
                   className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${isActive('/login')
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
                     }`}
                 >
                   Login

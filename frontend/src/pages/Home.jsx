@@ -1,5 +1,6 @@
 import { ShoppingCart, Heart, Star, Truck, RotateCcw, Lock } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { API_BASE_URL } from '../config/env'
 
 export default function Home() {
@@ -8,14 +9,20 @@ export default function Home() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
 
+  const [searchParams] = useSearchParams()
+  const searchQuery = searchParams.get('search')
+
   useEffect(() => {
     fetchProducts()
     fetchLikedProducts()
-  }, [])
+  }, [searchQuery])
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/products`)
+      const url = searchQuery
+        ? `${API_BASE_URL}/api/products?search=${encodeURIComponent(searchQuery)}`
+        : `${API_BASE_URL}/api/products`
+      const res = await fetch(url)
       const data = await res.json()
       setProducts(data)
     } catch (err) {
