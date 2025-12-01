@@ -1,122 +1,89 @@
 import { ShoppingCart, Heart, Star, Truck, RotateCcw, Lock } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { API_BASE_URL } from '../config/env'
 
 export default function Home() {
   const [wishlist, setWishlist] = useState(new Set())
   const [cartItems, setCartItems] = useState([])
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const toggleWishlist = (productId) => {
-    const newWishlist = new Set(wishlist)
-    if (newWishlist.has(productId)) {
-      newWishlist.delete(productId)
-    } else {
-      newWishlist.add(productId)
+  useEffect(() => {
+    fetchProducts()
+    fetchLikedProducts()
+  }, [])
+
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/products`)
+      const data = await res.json()
+      setProducts(data)
+    } catch (err) {
+      console.error('Error fetching products:', err)
+    } finally {
+      setLoading(false)
     }
-    setWishlist(newWishlist)
+  }
+
+  const fetchLikedProducts = async () => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/likes`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+      })
+      if (res.ok) {
+        const data = await res.json()
+        const likedIds = new Set(data.map(p => p.id))
+        setWishlist(likedIds)
+      }
+    } catch (err) {
+      console.error('Error fetching likes:', err)
+    }
+  }
+
+  const toggleWishlist = async (productId) => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      alert('Please login to like products')
+      return
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/likes/${productId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        const newWishlist = new Set(wishlist)
+        if (data.liked) {
+          newWishlist.add(productId)
+        } else {
+          newWishlist.delete(productId)
+        }
+        setWishlist(newWishlist)
+        // Dispatch event to update navbar
+        window.dispatchEvent(new Event('likesUpdated'))
+      }
+    } catch (err) {
+      console.error('Error toggling like:', err)
+    }
   }
 
   const addToCart = (product) => {
     setCartItems([...cartItems, product])
   }
 
-  const products = [
-    {
-      id: 1,
-      name: 'Premium Wireless Headphones',
-      price: 129.99,
-      originalPrice: 199.99,
-      rating: 4.8,
-      reviews: 342,
-      image: 'https://via.placeholder.com/250x250/3B82F6/FFFFFF?text=Headphones',
-      category: 'Electronics',
-      badge: 'Best Seller',
-      description: 'High-quality sound with noise cancellation'
-    },
-    {
-      id: 2,
-      name: 'Smart Watch Pro',
-      price: 299.99,
-      originalPrice: 399.99,
-      rating: 4.6,
-      reviews: 256,
-      image: 'https://via.placeholder.com/250x250/8B5CF6/FFFFFF?text=SmartWatch',
-      category: 'Wearables',
-      badge: 'New',
-      description: 'Advanced fitness tracking and notifications'
-    },
-    {
-      id: 3,
-      name: 'Ultra HD Camera',
-      price: 799.99,
-      originalPrice: 999.99,
-      rating: 4.9,
-      reviews: 189,
-      image: 'https://via.placeholder.com/250x250/EC4899/FFFFFF?text=Camera',
-      category: 'Photography',
-      badge: 'Hot',
-      description: '4K video recording with stabilization'
-    },
-    {
-      id: 4,
-      name: 'Portable Speaker',
-      price: 79.99,
-      originalPrice: 129.99,
-      rating: 4.5,
-      reviews: 412,
-      image: 'https://via.placeholder.com/250x250/F59E0B/FFFFFF?text=Speaker',
-      category: 'Audio',
-      badge: null,
-      description: 'Waterproof design with 12-hour battery'
-    },
-    {
-      id: 5,
-      name: 'Mechanical Keyboard RGB',
-      price: 149.99,
-      originalPrice: 249.99,
-      rating: 4.7,
-      reviews: 523,
-      image: 'https://via.placeholder.com/250x250/10B981/FFFFFF?text=Keyboard',
-      category: 'Gaming',
-      badge: 'Sale',
-      description: 'Cherry MX switches with RGB lighting'
-    },
-    {
-      id: 6,
-      name: 'Wireless Mouse Pro',
-      price: 59.99,
-      originalPrice: 99.99,
-      rating: 4.4,
-      reviews: 298,
-      image: 'https://via.placeholder.com/250x250/06B6D4/FFFFFF?text=Mouse',
-      category: 'Accessories',
-      badge: null,
-      description: 'Precision tracking up to 4000 DPI'
-    },
-    {
-      id: 7,
-      name: 'USB-C Hub Multi Port',
-      price: 39.99,
-      originalPrice: 79.99,
-      rating: 4.6,
-      reviews: 187,
-      image: 'https://via.placeholder.com/250x250/6366F1/FFFFFF?text=USB+Hub',
-      category: 'Accessories',
-      badge: 'New',
-      description: '7-in-1 connectivity solution'
-    },
-    {
-      id: 8,
-      name: 'Phone Stand & Holder',
-      price: 24.99,
-      originalPrice: 49.99,
-      rating: 4.3,
-      reviews: 654,
-      image: 'https://via.placeholder.com/250x250/8B5CF6/FFFFFF?text=Phone+Stand',
-      category: 'Accessories',
-      badge: null,
-      description: 'Adjustable and portable design'
-    }
-  ]
+  if (loading) return <div className="text-center py-20">Loading...</div>
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-blue-50 to-gray-50">
@@ -228,10 +195,14 @@ export default function Home() {
                   {/* Price */}
                   <div className="flex items-baseline gap-2 mb-4">
                     <span className="text-2xl font-bold text-blue-600">${product.price}</span>
-                    <span className="text-sm text-gray-500 line-through">${product.originalPrice}</span>
-                    <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                      Save {Math.round((1 - product.price / product.originalPrice) * 100)}%
-                    </span>
+                    {product.originalPrice && (
+                      <>
+                        <span className="text-sm text-gray-500 line-through">${product.originalPrice}</span>
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+                          Save {Math.round((1 - product.price / product.originalPrice) * 100)}%
+                        </span>
+                      </>
+                    )}
                   </div>
 
                   {/* Add to Cart Button */}

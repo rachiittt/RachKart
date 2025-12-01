@@ -7,6 +7,8 @@ import Signup from './pages/Signup'
 import About from './pages/About'
 import Contact from './pages/Contact'
 
+import LikedProducts from './pages/LikedProducts'
+
 export default function App() {
   return (
     <Router>
@@ -17,6 +19,7 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/liked-products" element={<LikedProducts />} />
       </Routes>
       <Footer />
     </Router>

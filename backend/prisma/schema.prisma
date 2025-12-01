@@ -17,4 +17,32 @@ model User {
   passwordHash  String    // Store the hashed password (never plain text!)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  likes         Like[]
+}
+
+model Product {
+  id            Int       @id @default(autoincrement())
+  name          String
+  price         Float
+  originalPrice Float?
+  rating        Float     @default(0)
+  reviews       Int       @default(0)
+  image         String
+  category      String
+  badge         String?
+  description   String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  likes         Like[]
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
 }

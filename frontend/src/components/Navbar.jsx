@@ -7,6 +7,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isAuth, setIsAuth] = useState(false)
   const [cartCount, setCartCount] = useState(0)
+  const [likeCount, setLikeCount] = useState(0)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -15,7 +16,34 @@ export default function Navbar() {
   useEffect(() => {
     const token = localStorage.getItem('token')
     setIsAuth(Boolean(token))
+    if (token) fetchLikeCount()
+
+    const handleLikesUpdate = () => {
+      fetchLikeCount()
+    }
+
+    window.addEventListener('likesUpdated', handleLikesUpdate)
+    return () => window.removeEventListener('likesUpdated', handleLikesUpdate)
   }, [])
+
+  const fetchLikeCount = async () => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/likes`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setLikeCount(data.length)
+      }
+    } catch (err) {
+      console.error('Error fetching like count:', err)
+    }
+  }
 
   return (
     <nav className="border-b border-gray-200 sticky top-0 z-50 bg-gradient-to-r from-white via-blue-50 to-white shadow-md">
@@ -28,27 +56,24 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            <Link 
-              to="/" 
-              className={`text-sm font-medium transition-colors ${
-                isActive('/') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
-              }`}
+            <Link
+              to="/"
+              className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
+                }`}
             >
               Shop
             </Link>
-            <Link 
-              to="/about" 
-              className={`text-sm font-medium transition-colors ${
-                isActive('/about') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
-              }`}
+            <Link
+              to="/about"
+              className={`text-sm font-medium transition-colors ${isActive('/about') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
+                }`}
             >
               About
             </Link>
-            <Link 
-              to="/contact" 
-              className={`text-sm font-medium transition-colors ${
-                isActive('/contact') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
-              }`}
+            <Link
+              to="/contact"
+              className={`text-sm font-medium transition-colors ${isActive('/contact') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
+                }`}
             >
               Contact
             </Link>
@@ -59,23 +84,23 @@ export default function Navbar() {
               <ShoppingCart size={20} className="text-gray-700 hover:text-blue-600" />
               {cartCount > 0 && <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{cartCount}</span>}
             </button>
-            <button className="p-2 hover:bg-blue-100 rounded-full transition-colors">
-              <Heart size={20} className="text-gray-700 hover:text-red-500" />
-            </button>
+            <Link to="/liked-products" className="relative p-2 hover:bg-blue-100 rounded-full transition-colors">
+              <Heart size={20} className={`text-gray-700 hover:text-red-500 ${isActive('/liked-products') ? 'fill-red-500 text-red-500' : ''}`} />
+              {likeCount > 0 && <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{likeCount}</span>}
+            </Link>
             {!isAuth ? (
               <>
-                <Link 
-                  to="/login" 
-                  className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${
-                    isActive('/login') 
-                      ? 'bg-blue-600 text-white' 
+                <Link
+                  to="/login"
+                  className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${isActive('/login')
+                      ? 'bg-blue-600 text-white'
                       : 'text-gray-700 hover:bg-gray-100'
-                  }`}
+                    }`}
                 >
                   Login
                 </Link>
-                <Link 
-                  to="/signup" 
+                <Link
+                  to="/signup"
                   className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors font-medium text-sm"
                 >
                   Sign Up
