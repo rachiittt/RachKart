@@ -8,6 +8,8 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js'
 import productRoutes from './routes/productRoutes.js'
 import likeRoutes from './routes/likeRoutes.js'
+import reviewRoutes from './routes/reviewRoutes.js'
+import cartRoutes from './routes/cartRoutes.js'
 
 dotenv.config()
 
@@ -27,6 +29,8 @@ app.use(cookieParser())
 app.use('/api/auth', authRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/likes', likeRoutes)
+app.use('/api/reviews', reviewRoutes)
+app.use('/api/cart', cartRoutes)
 
 // Start server
 app.listen(PORT, () => {

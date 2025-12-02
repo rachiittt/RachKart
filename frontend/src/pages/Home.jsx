@@ -1,12 +1,13 @@
 import { ShoppingCart, Heart, Star, Truck, RotateCcw, Lock, Filter } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { API_BASE_URL } from '../config/env'
 import FilterSidebar from '../components/FilterSidebar'
 import SortDropdown from '../components/SortDropdown'
 import Pagination from '../components/Pagination'
 
 export default function Home() {
+  const navigate = useNavigate()
   const [wishlist, setWishlist] = useState(new Set())
   const [cartItems, setCartItems] = useState([])
   const [products, setProducts] = useState([])
@@ -117,8 +118,30 @@ export default function Home() {
     }
   }
 
-  const addToCart = (product) => {
-    setCartItems([...cartItems, product])
+  const addToCart = async (product) => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      alert('Please login to add items to cart')
+      return
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/cart`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ productId: product.id, quantity: 1 })
+      })
+      if (res.ok) {
+        // Dispatch event to update navbar cart count
+        window.dispatchEvent(new Event('cartUpdated'))
+        alert('Added to cart!')
+      }
+    } catch (err) {
+      console.error('Error adding to cart:', err)
+    }
   }
 
   const handleSortChange = (field, order) => {
@@ -197,8 +220,9 @@ export default function Home() {
               {products.map((product, index) => (
                 <div
                   key={product.id}
-                  className="product-card bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl border border-gray-100 transition-all duration-300"
+                  className="product-card bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl border border-gray-100 transition-all duration-300 cursor-pointer"
                   style={{ animationDelay: `${index * 0.05}s` }}
+                  onClick={() => navigate(`/product/${product.id}`)}
                 >
                   {/* Product Image */}
                   <div className="relative bg-gray-100 overflow-hidden h-48 group">
@@ -213,7 +237,10 @@ export default function Home() {
                       </span>
                     )}
                     <button
-                      onClick={() => toggleWishlist(product.id)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleWishlist(product.id)
+                      }}
                       className="absolute top-3 left-3 p-2 bg-white rounded-full shadow-md hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100 translate-y-[-10px] group-hover:translate-y-0 duration-300"
                     >
                       <Heart
@@ -252,7 +279,10 @@ export default function Home() {
                         )}
                       </div>
                       <button
-                        onClick={() => addToCart(product)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          addToCart(product)
+                        }}
                         className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-blue-200 hover:shadow-lg"
                       >
                         <ShoppingCart size={20} />

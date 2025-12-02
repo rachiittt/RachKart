@@ -72,3 +72,29 @@ export const getMe = async (req, res) => {
     const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, email: true, name: true } })
     return res.json({ user })
 }
+
+export const updateProfile = async (req, res) => {
+    try {
+        const userId = req.user.sub
+        const { name, email, password } = req.body
+
+        const updateData = {}
+        if (name) updateData.name = name
+        if (email) updateData.email = email
+        if (password) {
+            const salt = await bcrypt.genSalt(10)
+            updateData.passwordHash = await bcrypt.hash(password, salt)
+        }
+
+        const user = await prisma.user.update({
+            where: { id: userId },
+            data: updateData,
+            select: { id: true, email: true, name: true }
+        })
+
+        return res.json({ message: 'Profile updated', user })
+    } catch (err) {
+        console.error(err)
+        return res.status(500).json({ error: 'Server error' })
+    }
+}

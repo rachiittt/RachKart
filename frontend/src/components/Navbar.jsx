@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Search, Menu, X, ShoppingCart, Heart } from 'lucide-react'
+import { Search, Menu, X, ShoppingCart, Heart, User } from 'lucide-react'
 import { API_BASE_URL } from '../config/env'
 
 export default function Navbar() {
@@ -18,14 +18,25 @@ export default function Navbar() {
   useEffect(() => {
     const token = localStorage.getItem('token')
     setIsAuth(Boolean(token))
-    if (token) fetchLikeCount()
+    if (token) {
+      fetchLikeCount()
+      fetchCartCount()
+    }
 
     const handleLikesUpdate = () => {
       fetchLikeCount()
     }
 
+    const handleCartUpdate = () => {
+      fetchCartCount()
+    }
+
     window.addEventListener('likesUpdated', handleLikesUpdate)
-    return () => window.removeEventListener('likesUpdated', handleLikesUpdate)
+    window.addEventListener('cartUpdated', handleCartUpdate)
+    return () => {
+      window.removeEventListener('likesUpdated', handleLikesUpdate)
+      window.removeEventListener('cartUpdated', handleCartUpdate)
+    }
   }, [])
 
   const fetchLikeCount = async () => {
@@ -44,6 +55,25 @@ export default function Navbar() {
       }
     } catch (err) {
       console.error('Error fetching like count:', err)
+    }
+  }
+
+  const fetchCartCount = async () => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/cart`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      if (res.ok) {
+        const data = await res.json()
+        const totalItems = data.items?.reduce((sum, item) => sum + item.quantity, 0) || 0
+        setCartCount(totalItems)
+      }
+    } catch (err) {
+      console.error('Error fetching cart count:', err)
     }
   }
 
@@ -118,10 +148,10 @@ export default function Navbar() {
                 </button>
               )}
             </div>
-            <button className="relative p-2 hover:bg-blue-100 rounded-full transition-colors">
-              <ShoppingCart size={20} className="text-gray-700 hover:text-blue-600" />
+            <Link to="/cart" className="relative p-2 hover:bg-blue-100 rounded-full transition-colors">
+              <ShoppingCart size={20} className={`text-gray-700 hover:text-blue-600 ${isActive('/cart') ? 'text-blue-600' : ''}`} />
               {cartCount > 0 && <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{cartCount}</span>}
-            </button>
+            </Link>
             <Link to="/liked-products" className="relative p-2 hover:bg-blue-100 rounded-full transition-colors">
               <Heart size={20} className={`text-gray-700 hover:text-red-500 ${isActive('/liked-products') ? 'fill-red-500 text-red-500' : ''}`} />
               {likeCount > 0 && <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{likeCount}</span>}
@@ -145,29 +175,38 @@ export default function Navbar() {
                 </Link>
               </>
             ) : (
-              <button
-                onClick={async () => {
-                  const token = localStorage.getItem('token')
-                  try {
-                    await fetch(`${API_BASE_URL}/api/auth/logout`, {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: token ? `Bearer ${token}` : ''
-                      },
-                      body: JSON.stringify({ token })
-                    })
-                  } catch (err) {
-                    console.warn('Logout API error', err)
-                  }
-                  localStorage.removeItem('token')
-                  setIsAuth(false)
-                  navigate('/')
-                }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors font-medium text-sm"
-              >
-                Logout
-              </button>
+              <div className="flex items-center gap-4">
+                <Link
+                  to="/profile"
+                  className={`p-2 rounded-full hover:bg-blue-100 transition-colors ${isActive('/profile') ? 'bg-blue-100 text-blue-600' : 'text-gray-700'}`}
+                >
+                  <User size={20} />
+                </Link>
+                <button
+                  onClick={async () => {
+                    const token = localStorage.getItem('token')
+                    try {
+                      await fetch(`${API_BASE_URL}/api/auth/logout`, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Authorization: token ? `Bearer ${token}` : ''
+                        },
+                        body: JSON.stringify({ token })
+                      })
+                    } catch (err) {
+                      console.warn('Logout API error', err)
+                    }
+                    localStorage.removeItem('token')
+                    localStorage.removeItem('user')
+                    setIsAuth(false)
+                    navigate('/')
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors font-medium text-sm"
+                >
+                  Logout
+                </button>
+              </div>
             )}
           </div>
 
