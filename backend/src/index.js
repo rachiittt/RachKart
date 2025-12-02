@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 5001
 const prisma = new PrismaClient()
 
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: "https://rach-kart.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
