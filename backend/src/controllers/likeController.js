@@ -15,7 +15,6 @@ export const toggleLike = async (req, res) => {
                 }
             }
         })
-
         if (existingLike) {
             await prisma.like.delete({
                 where: {
