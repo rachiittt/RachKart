@@ -178,6 +178,3 @@ export const getProductReviews = async (req, res) => {
         res.status(500).json({ error: 'Server error' })
     }
 }
-
-
-// comment test 
