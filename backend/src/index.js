@@ -35,7 +35,7 @@ app.use('/api/cart', cartRoutes)
 
 
 app.get("/",(req,res)=>{
-  res.send("hiii")
+  res.send("Backend is running")
 })
 
 // Start server
