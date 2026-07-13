@@ -1,4 +1,4 @@
-# RachKart — E-commerce Fullstack Application.
+# RachKart — E-commerce Fullstack Application
 
 RachKart is a modern e-commerce starter built with React, Vite, Tailwind CSS on the frontend and Express + Prisma on the backend. This repository is prepared for local development and ready to be pushed to a new GitHub repository.
 
